@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
@@ -17,41 +19,39 @@ class UserController extends Controller
     ) {
     }
 
-    public function index(IndexUserRequest $request)
+    public function index(IndexUserRequest $request): JsonResponse
     {
         $users = $this->userService->paginate((int) $request->validated('per_page', 15));
 
-        return UserResource::collection($users);
+        return $this->successResponse(UserResource::collection($users));
     }
 
     public function store(StoreUserRequest $request): JsonResponse
     {
         $user = $this->userService->create($request->validated());
 
-        return (new UserResource($user))
-            ->response()
-            ->setStatusCode(201);
+        return $this->successResponse(new UserResource($user), 'Created', 201);
     }
 
-    public function show(int $user): UserResource
+    public function show(int $user): JsonResponse
     {
-        return new UserResource($this->userService->findOrFail($user));
+        return $this->successResponse(new UserResource($this->userService->findOrFail($user)));
     }
 
-    public function update(UpdateUserRequest $request, int $user): UserResource
+    public function update(UpdateUserRequest $request, int $user): JsonResponse
     {
         $updatedUser = $this->userService->update(
             $this->userService->findOrFail($user),
             $request->validated()
         );
 
-        return new UserResource($updatedUser);
+        return $this->successResponse(new UserResource($updatedUser));
     }
 
     public function destroy(int $user): JsonResponse
     {
         $this->userService->delete($this->userService->findOrFail($user));
 
-        return response()->json(null, 204);
+        return $this->successResponse(null, 'Deleted');
     }
 }

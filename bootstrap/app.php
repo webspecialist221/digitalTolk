@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
+use App\Exceptions\ApiException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Exceptions\ApiException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -19,7 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (ApiException $exception) {
             return response()->json(
                 [
+                    'success' => false,
                     'message' => $exception->getMessage(),
+                    'errors' => null,
                 ],
                 $exception->getStatusCode()
             );

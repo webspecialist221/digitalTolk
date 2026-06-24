@@ -8,9 +8,11 @@
     "require": {
         "php": "^8.2",
         "laravel/framework": "^12.0",
+        "laravel/sanctum": "^4.3",
         "laravel/tinker": "^2.10.1"
     },
     "require-dev": {
+        "darkaonline/l5-swagger": "^11.1",
         "fakerphp/faker": "^1.23",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
@@ -47,6 +49,10 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
+        ],
+        "test:coverage": [
+            "@php artisan config:clear --ansi",
+            "sh -lc 'if php -m | grep -qiE \"xdebug|pcov\"; then output=$(phpdbg -qrr vendor/bin/phpunit --coverage-text --colors=never 2>&1); status=$?; printf \"%s\\n\" \"$output\"; if [ $status -ne 0 ]; then exit $status; fi; coverage=$(printf \"%s\\n\" \"$output\" | grep -Eo \"Lines:[[:space:]]*[0-9.]+%\" | tail -n1 | grep -Eo \"[0-9.]+\" || true); if [ -n \"$coverage\" ] && awk \"BEGIN { exit !($coverage < 95) }\"; then echo \"Code coverage $coverage% is below 95%\"; exit 1; fi; if [ -z \"$coverage\" ]; then echo \"Unable to determine coverage percentage from PHPUnit output.\"; exit 1; fi; else echo \"Coverage driver not available. Install Xdebug or PCOV to generate a report.\"; fi'"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
